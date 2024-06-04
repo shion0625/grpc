@@ -29,7 +29,7 @@ message CategoryParam {
 }
 
 // 商品カテゴリを複数件返すResult型
-message CategorySearchResult {
+message CategoriesResult {
   repeated Category categories = 1; // 商品カテゴリ複数
   Error error = 2; // エラー
   google.protobuf.Timestamp timestamp = 3; // レスポンスのタイムスタンプ
@@ -61,7 +61,7 @@ message ProductsResult {
     google.protobuf.Timestamp timestamp = 3; // レスポンスのタイムスタンプ
 }
 
-// 商品１件を返すResult型
+// 商品1件を返すResult型
 message ProductResult {
   // エラーか検索結果のいずれかを返す
   oneof result {
@@ -69,4 +69,26 @@ message ProductResult {
     Error error = 2; // エラー
   }
   google.protobuf.Timestamp timestamp = 3; // レスポンスのタイムスタンプ
+}
+
+/**********************************************
+商品カテゴリと商品の問い合わせサービス型定義
+**********************************************/
+
+//商品カテゴリ問い合わせサービス型
+service CategoryQuery {
+    // 商品カテゴリ検索
+    rpc List(google.protobuf.Empty) returns (CategoriesResult);
+    // 商品カテゴリ1件検索
+    rpc ById(CategoryParam) returns (CategoryResult);
+}
+
+// 商品問い合わせサービス型
+service ProductQuery {
+    // 商品検索
+    rpc List(google.protobuf.Empty) returns (ProductsResult);
+    // 商品1件検索
+    rpc ById(ProductParam) returns (ProductResult);
+    // 指定されたキーワードの商品を取得して返す
+    rpc ByKeyword(ProductParam) returns (ProductsResult);
 }
