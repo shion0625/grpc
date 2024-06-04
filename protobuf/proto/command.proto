@@ -1,0 +1,50 @@
+/*
+CommandService用のParam型とResult型を定義したprotoファイル
+*/
+
+syntax = "proto3";
+
+option go_package = "./pb";
+
+import "proto/error.proto";
+import "proto/models.proto";
+
+import "google/protobuf/timestamp.proto";
+
+package proto;
+
+enum CRUD {
+    UNKNOWN = 0;
+    INSERT = 1;
+    UPDATE = 2;
+    DELETE = 3;
+}
+
+
+/*
+商品カテゴリ更新用ParamとResult型の定義
+*/
+
+message CategoryUpParam {
+    string id = 1;
+    string name = 2;
+}
+
+message ProductUpParam {
+    string id = 1;
+    string name = 2;
+    int32 price = 3;
+    string categoryId = 4;
+}
+
+message CategoryUpResult {
+    Category category = 1;
+    Error error = 2;
+    google.protobuf.Timestamp timestamp = 3;
+}
+
+message ProductUpResult {
+    Product product = 1;
+    Error error = 2;
+    google.protobuf.Timestamp timestamp = 3;
+}
