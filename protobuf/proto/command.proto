@@ -48,3 +48,26 @@ message ProductUpResult {
     Error error = 2;
     google.protobuf.Timestamp timestamp = 3;
 }
+
+/**********************************************
+商品カテゴリと商品の更新サービス型の定義
+**********************************************/
+//商品カテゴリ更新サービス型
+service CategoryCommand {
+    // 商品カテゴリを追加した結果を返す
+    rpc Create(CategoryUpParam) returns (CategoryUpResult);
+    // 商品カテゴリを更新した結果を返す
+    rpc Update(CategoryUpParam) returns (CategoryUpResult);
+    // 商品カテゴリを削除した結果を返す
+    rpc Delete(CategoryUpParam) returns (CategoryUpResult);
+}
+
+//商品更新サービス型
+service ProductCommand {
+    // 商品を追加した結果を返す
+    rpc Create(ProductUpParam) returns (ProductUpResult);
+    // 商品を更新した結果を返す
+    rpc Update(ProductUpParam) returns (ProductUpResult);
+    // 商品を削除した結果を返す
+    rpc Delete(ProductUpParam) returns (ProductUpResult);
+}
