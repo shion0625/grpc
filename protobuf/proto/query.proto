@@ -1,0 +1,72 @@
+/*
+QueryService用のParam型とResult型を定義したprotoファイル
+*/
+
+// ライセンスヘッダ：バージョン3を利用
+syntax = "proto3";
+
+// 生成コードの格納先パッケージを指定
+option go_package = "./pb";
+
+// error.protoとmodels.protoをインポート
+import "proto/error.proto";
+import "proto/models.proto";
+
+// パッケージの宣言
+package proto;
+
+// google/protobufモジュールのデータ型をインポート
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+/**********************************************
+商品カテゴリ検索用param型とResult型の定義
+**********************************************/
+
+// カテゴリ検索用Param型
+message CategoryParam {
+    string id = 1; // カテゴリ番号
+}
+
+// 商品カテゴリを複数件返すResult型
+message CategorySearchResult {
+  repeated Category categories = 1; // 商品カテゴリ複数
+  Error error = 2; // エラー
+  google.protobuf.Timestamp timestamp = 3; // レスポンスのタイムスタンプ
+}
+
+// 商品カテゴリ1件を返すResult型
+message CategoryResult {
+  // エラーか検索結果のいずれかを返す
+  oneof result {
+    Category category = 1; // 商品カテゴリ1件
+    Error error = 2; // エラー
+  }
+  google.protobuf.Timestamp timestamp = 3; // レスポンスのタイムスタンプ
+}
+
+/**********************************************
+商品検索用param型とResult型の定義
+**********************************************/
+// 商品検索用Param型
+message ProductParam {
+    string id = 1; // 商品番号
+    string keyword = 2; // キーワード
+}
+
+// 商品複数件を返す Result型
+message ProductsResult {
+    repeated Product products = 1; // 商品複数
+    Error error = 2; // エラー
+    google.protobuf.Timestamp timestamp = 3; // レスポンスのタイムスタンプ
+}
+
+// 商品１件を返すResult型
+message ProductResult {
+  // エラーか検索結果のいずれかを返す
+  oneof result {
+    Product product = 1; // 商品
+    Error error = 2; // エラー
+  }
+  google.protobuf.Timestamp timestamp = 3; // レスポンスのタイムスタンプ
+}
