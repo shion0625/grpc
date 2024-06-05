@@ -1,94 +1,91 @@
-/*
-QueryService用のParam型とResult型を定義したprotoファイル
-*/
+//
+//  QueryService用のParam型とResult型を定義したprotoファイル
+//
 
-// ライセンスヘッダ：バージョン3を利用
+// ライセンスヘッダ:バージョン3を利用
 syntax = "proto3";
-
 // 生成コードの格納先パッケージを指定
-option go_package = "./pb";
+option go_package = "/pb";
 
-// error.protoとmodels.protoをインポート
+// error.protoのインポート
 import "proto/error.proto";
+// models.protoのインポート
 import "proto/models.proto";
-
-// パッケージの宣言
-package proto;
 
 // google/protobufモジュールのデータ型をインポート
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
-/**********************************************
-商品カテゴリ検索用param型とResult型の定義
-**********************************************/
 
-// カテゴリ検索用Param型
-message CategoryParam {
+// パッケージの宣言
+package proto;
+
+
+//*****************************************
+// 商品カテゴリ検索用param型とResult型の定義
+//*****************************************
+//  カテゴリ検索用Param型
+message CategoryParam{
     string id = 1; // カテゴリ番号
 }
-
-// 商品カテゴリを複数件返すResult型
+//  商品カテゴリ複数件を返すResult型
 message CategoriesResult {
-  repeated Category categories = 1; // 商品カテゴリ複数
-  Error error = 2; // エラー
-  google.protobuf.Timestamp timestamp = 3; // レスポンスのタイムスタンプ
+    repeated Category   categories  = 1; // 商品カテゴリ複数
+    Error               error       = 2; // エラー
+    google.protobuf.Timestamp timestamp = 3; // タイムスタンプ
+}
+//  商品カテゴリ1件を返すResult型
+message CategoryResult{
+    // エラーか検索結果のいずれかを返す
+    oneof result {
+        Category    category = 1;   // 商品カテゴリ
+        Error       error    = 2;   // エラー
+    }
+    google.protobuf.Timestamp timestamp = 3;    // タイムスタンプ
 }
 
-// 商品カテゴリ1件を返すResult型
-message CategoryResult {
-  // エラーか検索結果のいずれかを返す
-  oneof result {
-    Category category = 1; // 商品カテゴリ1件
-    Error error = 2; // エラー
-  }
-  google.protobuf.Timestamp timestamp = 3; // レスポンスのタイムスタンプ
-}
-
-/**********************************************
-商品検索用param型とResult型の定義
-**********************************************/
-// 商品検索用Param型
+//*****************************************
+// 商品検索用param型とResult型の定義
+//*****************************************
+//  商品検索用Param型
 message ProductParam {
-    string id = 1; // 商品番号
+    string id      = 1; // 商品番号
     string keyword = 2; // キーワード
 }
-
-// 商品複数件を返す Result型
+//  商品複数件を返すResult型
 message ProductsResult {
-    repeated Product products = 1; // 商品複数
-    Error error = 2; // エラー
-    google.protobuf.Timestamp timestamp = 3; // レスポンスのタイムスタンプ
+    repeated Product    products = 1; // 商品複数
+    Error               error    = 2; // エラー
+    google.protobuf.Timestamp timestamp = 3;    // タイムスタンプ
+}
+//  商品1件を返すResult型
+message ProductResult{
+    // エラーか検索結果のいずれかを返す
+    oneof result {
+        Product product = 1;   // 検索結果
+        Error   error   = 2;   // 検索エラー
+    }
+    google.protobuf.Timestamp timestamp = 3;    // タイムスタンプ
 }
 
-// 商品1件を返すResult型
-message ProductResult {
-  // エラーか検索結果のいずれかを返す
-  oneof result {
-    Product product = 1; // 商品
-    Error error = 2; // エラー
-  }
-  google.protobuf.Timestamp timestamp = 3; // レスポンスのタイムスタンプ
-}
-
-/**********************************************
-商品カテゴリと商品の問い合わせサービス型定義
-**********************************************/
-
-//商品カテゴリ問い合わせサービス型
+//*****************************************
+// 商品カテゴリと商品の問合せサービス型の定義
+//*****************************************
+//  商品カテゴリ問合せサービス型
 service CategoryQuery {
-    // 商品カテゴリ検索
-    rpc List(google.protobuf.Empty) returns (CategoriesResult);
-    // 商品カテゴリ1件検索
+    // すべてのカテゴリを取得して返す
+    rpc List(google.protobuf.Empty)   returns (CategoriesResult);
+    // 指定されたIDのカテゴリを取得して返す
     rpc ById(CategoryParam) returns (CategoryResult);
 }
-
-// 商品問い合わせサービス型
-service ProductQuery {
-    // 商品検索
-    rpc List(google.protobuf.Empty) returns (ProductsResult);
-    // 商品1件検索
-    rpc ById(ProductParam) returns (ProductResult);
+//  商品問合せサービス型
+service ProductQuery{
+    // すべての商品を取得して返す(Server streaming RPC)
+    rpc ListStream(google.protobuf.Empty)   returns (stream Product);
+    // すべての商品を取得して返す
+    rpc List(google.protobuf.Empty)   returns (ProductsResult);
+    // 指定されたIDの商品を取得して返す
+    rpc ById(ProductParam)    returns (ProductResult);
     // 指定されたキーワードの商品を取得して返す
     rpc ByKeyword(ProductParam) returns (ProductsResult);
 }
