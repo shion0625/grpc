@@ -11,12 +11,12 @@ type productId struct {
 	value string
 }
 
-func NewProductId(value string) (*productId, error) {
+func NewProductId(value string) (*productId, *errs.DomainError) {
 	const Length int = 36
 	const REGEXP string = "([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})"
 
 	if utf8.RuneCountInString(value) != Length {
-		return nil, errs.NewDomainError(fmt.Sprintf("商品IDは%d文字でなければなりません。", Length))
+		return nil, errs.NewDomainError(fmt.Sprintf("商品IDの長さは%d文字でなければなりません。", Length))
 	}
 
 	// 引数の正規表現(UUID)チェック
