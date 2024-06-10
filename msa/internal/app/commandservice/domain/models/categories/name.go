@@ -2,8 +2,9 @@ package categories
 
 import (
 	"fmt"
-	"github.com/shion0625/grpc/msa/internal/pkg/errs"
 	"unicode/utf8"
+
+	"github.com/shion0625/grpc/msa/internal/pkg/errs"
 )
 
 // カテゴリ名を保持する値オブジェクト

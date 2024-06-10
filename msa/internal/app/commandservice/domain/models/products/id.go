@@ -2,9 +2,10 @@ package products
 
 import (
 	"fmt"
-	"github.com/shion0625/grpc/msa/internal/pkg/errs"
 	"regexp"
 	"unicode/utf8"
+
+	"github.com/shion0625/grpc/msa/internal/pkg/errs"
 )
 
 type productId struct {

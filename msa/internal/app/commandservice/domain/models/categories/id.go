@@ -2,9 +2,10 @@ package categories
 
 import (
 	"fmt"
-	"github.com/shion0625/grpc/msa/internal/pkg/errs"
 	"regexp"
 	"unicode/utf8"
+
+	"github.com/shion0625/grpc/msa/internal/pkg/errs"
 )
 
 // カテゴリ番号を保持する値オブジェクト(UUIDを保持する)

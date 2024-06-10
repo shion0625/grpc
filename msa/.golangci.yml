@@ -1,0 +1,40 @@
+linters:
+  enable:
+    - govet
+    - errcheck
+    - staticcheck
+    - gosimple
+    - unused
+    - ineffassign
+    - typecheck
+    - gofmt
+    - goimports
+    - revive
+    - gocyclo
+    - dupl
+    - goconst
+    - nakedret
+    - unconvert
+    - exportloopref
+    - gocritic
+    - gosec
+    - misspell
+    - lll
+    - prealloc
+    - gocognit
+    - godox
+    - funlen
+    - wsl
+
+run:
+  timeout: 5m
+  issues-exit-code: 1
+
+issues:
+  exclude-use-default: false
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - errcheck

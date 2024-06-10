@@ -8,8 +8,12 @@ coverage:
 	ginkgo -cover --race --output-dir=test/coverage -coverprofile=coverage.out ./...
 	go tool cover -html=test/coverage/coverage.out -o test/coverage/coverage.html
 
+# コードの整形
+format:
+	goimports -w .
+
 # 静的解析ツールの実行
-lint:
+lint: format
 	golangci-lint run ./...
 
 # 依存関係のインストール
