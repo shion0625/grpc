@@ -2,16 +2,18 @@ package products
 
 import (
 	"github.com/google/uuid"
+	"github.com/shion0625/grpc/msa/internal/app/commandservice/domain/models/categories"
 	"github.com/shion0625/grpc/msa/internal/pkg/errs"
 )
 
 type Product struct {
-	id    *productId
-	name  *productName
-	price *productPrice
+	id       *productId
+	name     *productName
+	price    *productPrice
+	category *categories.Category
 }
 
-func NewProduct(name *productName, price *productPrice) (*Product, *errs.DomainError) {
+func NewProduct(name *productName, price *productPrice, category *categories.Category) (*Product, *errs.DomainError) {
 	uid, err := uuid.NewRandom()
 	if err != nil { // UUIDを生成する
 		return nil, errs.NewDomainError(err.Error())
@@ -25,9 +27,10 @@ func NewProduct(name *productName, price *productPrice) (*Product, *errs.DomainE
 
 	// 商品エンティティのインスタンスを生成して返す
 	return &Product{
-		id:    id,
-		name:  name,
-		price: price,
+		id:       id,
+		name:     name,
+		price:    price,
+		category: category,
 	}, nil
 }
 
