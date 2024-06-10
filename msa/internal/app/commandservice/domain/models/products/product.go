@@ -25,7 +25,6 @@ func NewProduct(name *productName, price *productPrice, category *categories.Cat
 		return nil, domainErr
 	}
 
-	// 商品エンティティのインスタンスを生成して返す
 	return &Product{
 		id:       id,
 		name:     name,
@@ -34,11 +33,14 @@ func NewProduct(name *productName, price *productPrice, category *categories.Cat
 	}, nil
 }
 
-func (p *Product) Equals(other *Product) (bool, *errs.DomainError) {
-	if other == nil {
-		return false, errs.NewDomainError("引数でnilが渡されました。")
+func NewProductWithId(id *productId, name *productName, price *productPrice, category *categories.Category) *Product {
+	product := Product{
+		id:       id,
+		name:     name,
+		price:    price,
+		category: category,
 	}
-	return p.id.Equals(other.id), nil
+	return &product
 }
 
 func (p *Product) Id() *productId {
@@ -51,4 +53,15 @@ func (p *Product) Name() *productName {
 
 func (p *Product) Price() *productPrice {
 	return p.price
+}
+
+func (p *Product) Category() *categories.Category {
+	return p.category
+}
+
+func (p *Product) Equals(other *Product) (bool, *errs.DomainError) {
+	if other == nil {
+		return false, errs.NewDomainError("引数でnilが指定されました。")
+	}
+	return p.id.Equals(other.id), nil
 }
