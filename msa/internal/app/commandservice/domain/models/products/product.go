@@ -40,6 +40,7 @@ func NewProductWithId(id *productId, name *productName, price *productPrice, cat
 		price:    price,
 		category: category,
 	}
+
 	return &product
 }
 
@@ -63,5 +64,6 @@ func (p *Product) Equals(other *Product) (bool, *errs.DomainError) {
 	if other == nil {
 		return false, errs.NewDomainError("引数でnilが指定されました。")
 	}
+
 	return p.id.Equals(other.id), nil
 }

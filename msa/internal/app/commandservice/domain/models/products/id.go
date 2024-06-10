@@ -13,17 +13,20 @@ type productId struct {
 }
 
 func NewProductId(value string) (*productId, *errs.DomainError) {
-	const Length int = 36
-	const REGEXP string = "([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})"
+	const (
+		LENGTH int    = 36                                                                       // フィールドの長さ
+		REGEXP string = "([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})" // UUIDの正規表現
+	)
 
-	if utf8.RuneCountInString(value) != Length {
-		return nil, errs.NewDomainError(fmt.Sprintf("商品IDの長さは%d文字でなければなりません。", Length))
+	if utf8.RuneCountInString(value) != LENGTH {
+		return nil, errs.NewDomainError(fmt.Sprintf("商品IDの長さは%d文字でなければなりません。", LENGTH))
 	}
 
 	// 引数の正規表現(UUID)チェック
 	if !regexp.MustCompile(REGEXP).Match([]byte(value)) {
 		return nil, errs.NewDomainError("商品IDはUUIDの形式でなければなりません。")
 	}
+
 	return &productId{value: value}, nil
 }
 

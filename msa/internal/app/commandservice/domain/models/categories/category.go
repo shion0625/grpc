@@ -14,18 +14,20 @@ type Category struct {
 
 // コンストラクタ
 func NewCategory(name *categoryName) (*Category, *errs.DomainError) {
-	if uid, err := uuid.NewRandom(); err != nil { // UUIDを生成する
+	uid, err := uuid.NewRandom() // UUIDを生成する
+	if err != nil {
 		return nil, errs.NewDomainError(err.Error())
-	} else {
-		if id, err := NewCategoryId(uid.String()); err != nil {
-			return nil, errs.NewDomainError(err.Error())
-		} else {
-			return &Category{
-				id:   id,
-				name: name,
-			}, nil
-		}
 	}
+
+	id, domainErr := NewCategoryId(uid.String())
+	if domainErr != nil {
+		return nil, domainErr
+	}
+
+	return &Category{
+		id:   id,
+		name: name,
+	}, nil
 }
 
 // ゲッター
@@ -41,6 +43,8 @@ func (c *Category) Equals(obj *Category) (bool, *errs.DomainError) {
 	if obj == nil {
 		return false, errs.NewDomainError("引数でnilが指定されました。")
 	}
+
 	result := c.id.Equals(obj.Id())
+
 	return result, nil
 }

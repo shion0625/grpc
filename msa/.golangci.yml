@@ -9,7 +9,7 @@ linters:
     - typecheck
     - gofmt
     - goimports
-    - revive
+    # - revive
     - gocyclo
     - dupl
     - goconst

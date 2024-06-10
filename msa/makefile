@@ -10,6 +10,7 @@ coverage:
 
 # コードの整形
 format:
+	go fmt ./...
 	goimports -w .
 
 # 静的解析ツールの実行

@@ -14,13 +14,17 @@ type categoryName struct {
 
 // コンストラクタ
 func NewCategoryName(value string) (*categoryName, *errs.DomainError) {
-	const MIN_LENGTH int = 2  // フィールドの最小文字数
-	const MAX_LENGTH int = 20 // フィールドの最大文字数
+	const (
+		MIN_LENGTH int = 2  // フィールドの最小文字数
+		MAX_LENGTH int = 20 // フィールドの最大文字数
+	)
+
 	// 引数の文字数チェック
 	count := utf8.RuneCountInString(value)
 	if count < MIN_LENGTH || count > MAX_LENGTH {
 		return nil, errs.NewDomainError(fmt.Sprintf("カテゴリ名の長さは%d文字以上、%d文字以内です。", MIN_LENGTH, MAX_LENGTH))
 	}
+
 	return &categoryName{value: value}, nil
 }
 

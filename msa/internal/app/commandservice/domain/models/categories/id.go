@@ -14,10 +14,12 @@ type categoryId struct {
 }
 
 func NewCategoryId(value string) (*categoryId, *errs.DomainError) {
-	// フィールドの長さ
-	const LENGTH int = 36
-	// UUIDの正規表現
-	const REGEXP string = "([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})"
+	const (
+		LENGTH int    = 36                                                                       // フィールドの長さ
+		REGEXP string = "([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})" // UUIDの正規表現
+
+	)
+
 	// 引数の文字数チェック
 	if utf8.RuneCountInString(value) != LENGTH {
 		return nil, errs.NewDomainError(fmt.Sprintf("カテゴリIDの長さは%d文字でなければなりません。", LENGTH))
@@ -26,6 +28,7 @@ func NewCategoryId(value string) (*categoryId, *errs.DomainError) {
 	if !regexp.MustCompile(REGEXP).Match([]byte(value)) {
 		return nil, errs.NewDomainError("カテゴリIDはUUIDの形式でなければなりません。")
 	}
+
 	return &categoryId{value: value}, nil
 }
 
