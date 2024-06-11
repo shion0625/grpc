@@ -2,7 +2,7 @@ services:
   queryservice:
     build:
       context: ../
-      dockerfile: build/queryservice/Dockerfile
+      dockerfile: build/queryservice/go/Dockerfile
     ports:
       - "8080:8080"
     depends_on:
@@ -11,7 +11,7 @@ services:
   commandservice:
     build:
       context: ../
-      dockerfile: build/commandservice/Dockerfile
+      dockerfile: build/commandservice/go/Dockerfile
     ports:
       - "8081:8081"
     depends_on:
@@ -28,12 +28,12 @@ services:
       - "3306:3306"
     volumes:
       - commanddb-data:/var/lib/mysql
-    command: >
-      --server-id=1          # サーバのID
-      --log-bin=mysql-bin    # バイナリログを有効にし、ログファイルの名前を指定
+      - ../internal/app/commandservice/infra/config/my.cnf:/etc/mysql/my.cnf
 
   querydb:
-    image: mysql:8.0
+    build:
+      context: ../
+      dockerfile: build/queryservice/mysql/Dockerfile
     environment:
       MYSQL_DATABASE: querydb
       MYSQL_USER: queryuser
@@ -45,16 +45,6 @@ services:
       - querydb-data:/var/lib/mysql
     depends_on:
       - commanddb
-    command: >
-      --server-id=2                # スレーブサーバのID
-      --log-bin                    # バイナリログを有効にする
-      --relay-log=relay-bin        # リレーログファイルの名前
-      --read-only=1                # 読み取り専用モード
-      --replicate-do-db=commanddb  # レプリケートするデータベース: commanddb
-      --master-host=commanddb      # マスターホストの名前
-      --master-user=root           # マスターユーザ名
-      --master-password=rootpassword # マスターユーザのパスワード
-      --master-port=3306           # マスターポート
 
 volumes:
   commanddb-data:
