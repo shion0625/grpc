@@ -6,7 +6,7 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - mysql
+      - querydb
 
   commandservice:
     build:
@@ -15,17 +15,31 @@ services:
     ports:
       - "8081:8081"
     depends_on:
-      - mysql
+      - commanddb
 
-  mysql:
+  commanddb:
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: mydatabase
+      MYSQL_DATABASE: commanddb
     ports:
       - "3306:3306"
     volumes:
-      - mysql-data:/var/lib/mysql
+      - commanddb-data:/var/lib/mysql
+
+  querydb:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: querydb
+    ports:
+      - "3307:3306"
+    volumes:
+      - querydb-data:/var/lib/mysql
+    depends_on:
+      - commanddb
+    command: --server-id=2 --log-bin --relay-log=relay-bin --read-only=1 --replicate-do-db=commanddb --replicate-do-db=querydb --master-host=commanddb --master-user=root --master-password=rootpassword --master-port=3306
 
 volumes:
-  mysql-data:
+  commanddb-data:
+  querydb-data:
