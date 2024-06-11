@@ -26,6 +26,9 @@ services:
       - "3306:3306"
     volumes:
       - commanddb-data:/var/lib/mysql
+    command: >
+      --server-id=1          # サーバのID
+      --log-bin=mysql-bin    # バイナリログを有効にし、ログファイルの名前を指定
 
   querydb:
     image: mysql:8.0
@@ -38,7 +41,16 @@ services:
       - querydb-data:/var/lib/mysql
     depends_on:
       - commanddb
-    command: --server-id=2 --log-bin --relay-log=relay-bin --read-only=1 --replicate-do-db=commanddb --replicate-do-db=querydb --master-host=commanddb --master-user=root --master-password=rootpassword --master-port=3306
+    command: >
+      --server-id=2                # スレーブサーバのID
+      --log-bin                    # バイナリログを有効にする
+      --relay-log=relay-bin        # リレーログファイルの名前
+      --read-only=1                # 読み取り専用モード
+      --replicate-do-db=commanddb  # レプリケートするデータベース: commanddb
+      --master-host=commanddb      # マスターホストの名前
+      --master-user=root           # マスターユーザ名
+      --master-password=rootpassword # マスターユーザのパスワード
+      --master-port=3306           # マスターポート
 
 volumes:
   commanddb-data:
