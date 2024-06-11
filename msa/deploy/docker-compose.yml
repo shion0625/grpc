@@ -1,0 +1,31 @@
+services:
+  queryservice:
+    build:
+      context: ../
+      dockerfile: build/queryservice/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+
+  commandservice:
+    build:
+      context: ../
+      dockerfile: build/commandservice/Dockerfile
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydatabase
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:
