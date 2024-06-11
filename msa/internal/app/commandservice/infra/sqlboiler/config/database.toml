@@ -1,0 +1,11 @@
+[mysql]                                # 使用するRDBMS
+    dbname     = "commanddb"           # データベース名
+    host       = "commanddb"           # ホスト名
+    port       = 3306                  # ポート番号
+    user       = "commanduser"         # ユーザー名
+    pass       = "commandpassword"     # パスワード
+    sslmode    = "false"               # SSLモード
+    whitelist = [                      # アクセスするデータベースオブジェクト
+        "product",                     # productテーブル
+        "category"                     # categoryテーブル
+    ]
