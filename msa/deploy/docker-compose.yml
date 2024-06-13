@@ -3,6 +3,11 @@ services:
     build:
       context: ../
       dockerfile: build/queryservice/go/Dockerfile
+      target: dev
+    working_dir: "/app"
+    command: ["air", "-c", "/app/build/queryservice/go/.air.toml"]
+    volumes:
+      - ..:/app
     ports:
       - "8080:8080"
     depends_on:
@@ -12,6 +17,11 @@ services:
     build:
       context: ../
       dockerfile: build/commandservice/go/Dockerfile
+      target: dev
+    working_dir: "/app"
+    command: ["air", "-c", "/app/build/commandservice/go/.air.toml"]
+    volumes:
+      - ..:/app
     ports:
       - "8081:8081"
     depends_on:

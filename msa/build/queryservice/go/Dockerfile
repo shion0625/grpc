@@ -1,12 +1,16 @@
-FROM golang:1.22.3-alpine as builder
+# dev
+FROM golang:1.22.3-alpine as dev
 WORKDIR /app
-COPY . .
 RUN go install github.com/air-verse/air@latest
 
-RUN cd cmd/queryservice && go build -o /queryservice
+COPY . .
+RUN go mod download && \
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o build/queryservice-linux-amd64 ./cmd/queryservice
 
+# release
 FROM alpine:latest as release
-COPY --from=builder /queryservice /queryservice
-COPY --from=builder /go/bin/* /usr/bin/
-COPY build/queryservice/.air.toml /app/.air.toml
-ENTRYPOINT ["/queryservice"]
+WORKDIR /app
+RUN apk --no-cache add tzdata && \
+    cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+COPY --from=dev build/queryservice /usr/local/bin/queryservice
+ENTRYPOINT ["queryservice"]
