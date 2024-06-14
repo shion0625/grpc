@@ -62,9 +62,8 @@ services:
     volumes:
       - querydb-data:/var/lib/mysql
       - ../internal/app/queryservice/infra/config/my.cnf:/etc/mysql/my.cnf
-      - ../internal/app/queryservice/infra/config/init.sh:/docker-entrypoint-initdb.d/init-querydb.sh
-      - ../ddl:/docker-entrypoint-initdb.d
-    command: bash -c "docker-entrypoint.sh mysqld && chmod +x /docker-entrypoint-initdb.d/init-querydb.sh && /docker-entrypoint-initdb.d/init-querydb.sh"
+      - ../ddl:/docker-entrypoint-initdb.d/ddl # DDLスクリプトを格納するディレクトリ
+      - ../internal/app/queryservice/infra/config/init.sh:/docker-entrypoint-initdb.d/init.sh # 初期化スクリプト
     depends_on:
       commanddb:
         condition: service_healthy

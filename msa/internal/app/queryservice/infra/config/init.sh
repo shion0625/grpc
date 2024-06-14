@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+# DDLスクリプトを実行
+for script in /docker-entrypoint-initdb.d/ddl/*.sql; do
+  echo "Running $script"
+  mysql -u root -p"${MYSQL_ROOT_PASSWORD}" querydb < "$script"
+done
+
 # Get master status from commanddb
 MASTER_STATUS=$(mysql -h "commanddb" -u "root" -p"${MYSQL_ROOT_PASSWORD}" -e "SHOW MASTER STATUS\G")
 MASTER_LOG_FILE=$(echo "$MASTER_STATUS" | grep 'File:' | awk '{print $2}')
