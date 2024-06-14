@@ -9,6 +9,10 @@ import (
 )
 
 func main() {
+	if err := loadEnv(); err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello, CommandService!!!"))
 	})
