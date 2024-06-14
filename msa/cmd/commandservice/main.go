@@ -28,5 +28,6 @@ func loadEnv() error {
 	if envFile == "" {
 		envFile = ".env.commandservice.dev"
 	}
+
 	return godotenv.Load(envFile)
 }

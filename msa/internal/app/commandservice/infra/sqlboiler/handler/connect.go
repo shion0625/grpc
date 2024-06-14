@@ -2,6 +2,7 @@ package handler
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"os"
 	"time"
@@ -20,33 +21,43 @@ const (
 type DBConfig struct {
 	DBName   string `toml:"dbname"`
 	Host     string `toml:"host"`
-	Port     string `toml:"port"`
+	Port     int64  `toml:"port"`
 	User     string `toml:"user"`
 	Password string `toml:"pass"`
 }
 
 func tomlRead(path string) (*DBConfig, error) {
-	var config DBConfig
-	if _, err := toml.DecodeFile(path, &config); err != nil {
+	m := map[string]DBConfig{}
+
+	if _, err := toml.DecodeFile(path, &m); err != nil {
 		return nil, err
 	}
+
+	config := m["mysql"]
+
 	return &config, nil
 }
 
-func DBConnect() (*sql.DB, error) {
-	config, err := tomlRead(os.Getenv("DB_CONFIG_PATH"))
-	if err != nil {
-		return nil, DBErrHandler(err)
+func DBConnect() error {
+	path := os.Getenv("DB_CONFIG_PATH")
+	if path == "" {
+		return DBErrHandler(errors.New("DB_CONFIG_PATH is not set"))
 	}
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", config.User, config.Password, config.Host, config.Port, config.DBName)
-	db, err := sql.Open(RDBMS, dsn)
+	config, err := tomlRead(path)
 	if err != nil {
-		return nil, DBErrHandler(err)
+		return DBErrHandler(err)
+	}
+
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", config.User, config.Password, config.Host, config.Port, config.DBName)
+	db, err := sql.Open(RDBMS, dsn)
+
+	if err != nil {
+		return DBErrHandler(err)
 	}
 
 	if err := db.Ping(); err != nil {
-		return nil, DBErrHandler(err)
+		return DBErrHandler(err)
 	}
 
 	// コネクションプールの設定
@@ -57,5 +68,5 @@ func DBConnect() (*sql.DB, error) {
 	boil.SetDB(db)
 	boil.DebugMode = true
 
-	return db, nil
+	return nil
 }

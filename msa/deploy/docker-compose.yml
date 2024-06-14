@@ -13,7 +13,7 @@ services:
     depends_on:
       - querydb
     environment:
-      - ENV_FILE=.env.queryservice.dev
+      - ENV_FILE=env/.env.queryservice.dev
 
   commandservice:
     build:
@@ -29,7 +29,7 @@ services:
     depends_on:
       - commanddb
     environment:
-      - ENV_FILE=.env.commandservice.dev
+      - ENV_FILE=env/.env.commandservice.dev
 
   commanddb:
     image: mysql:8.0
