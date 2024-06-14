@@ -1,5 +1,8 @@
 FROM golang:1.22.3-alpine as dev
 WORKDIR /app
+
+RUN apk --no-cache add make
+
 RUN go install github.com/air-verse/air@latest \
     && go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest \
     && go install github.com/volatiletech/sqlboiler/v4@latest \

@@ -38,25 +38,29 @@ services:
       MYSQL_USER: commanduser
       MYSQL_PASSWORD: commandpassword
       MYSQL_ROOT_PASSWORD: rootpassword
+      TZ: "Asia/Tokyo"
     ports:
       - "3306:3306"
     volumes:
       - commanddb-data:/var/lib/mysql
       - ../internal/app/commandservice/infra/config/my.cnf:/etc/mysql/my.cnf
+      - ../ddl:/docker-entrypoint-initdb.d
 
   querydb:
-    build:
-      context: ../
-      dockerfile: build/queryservice/mysql/Dockerfile
+    image: mysql:8.0
     environment:
       MYSQL_DATABASE: querydb
       MYSQL_USER: queryuser
       MYSQL_PASSWORD: querypassword
       MYSQL_ROOT_PASSWORD: rootpassword
+      TZ: "Asia/Tokyo"
     ports:
       - "3307:3306"
     volumes:
       - querydb-data:/var/lib/mysql
+      - ../internal/app/queryservice/infra/config/my.cnf:/etc/mysql/my.cnf
+      - ../internal/app/queryservice/infra/config/init.sh:/docker-entrypoint-initdb.d/init-querydb.sh
+    command: bash -c "chmod +x /docker-entrypoint-initdb.d/init-querydb.sh && docker-entrypoint.sh mysqld"
     depends_on:
       - commanddb
 

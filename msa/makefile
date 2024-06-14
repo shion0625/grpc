@@ -23,3 +23,6 @@ deps:
 
 # すべてのテストと解析を実行
 all: deps lint test coverage
+
+sqlboiler-model:
+	sqlboiler mysql -c internal/app/commandservice/infra/sqlboiler/config/database.toml -o models -p models --no-tests --wipe
