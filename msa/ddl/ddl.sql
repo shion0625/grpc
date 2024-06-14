@@ -1,7 +1,7 @@
 /*
     商品カテゴリ
 */
-CREATE TABLE commanddb.category(
+CREATE TABLE category(
     id INT NOT NULL AUTO_INCREMENT ,
     obj_id VARCHAR(36) NOT NULL ,
     name VARCHAR(20) NOT NULL , 
@@ -11,7 +11,7 @@ CREATE TABLE commanddb.category(
 /*
     商品
 */
-CREATE TABLE commanddb.product(
+CREATE TABLE product(
     id INT NOT NULL AUTO_INCREMENT ,
     obj_id VARCHAR(36) NOT NULL ,
     name VARCHAR(30) NOT NULL ,
