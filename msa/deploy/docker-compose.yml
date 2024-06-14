@@ -12,6 +12,8 @@ services:
       - "8080:8080"
     depends_on:
       - querydb
+    environment:
+      - ENV_FILE=.env.queryservice.dev
 
   commandservice:
     build:
@@ -26,6 +28,8 @@ services:
       - "8081:8081"
     depends_on:
       - commanddb
+    environment:
+      - ENV_FILE=.env.commandservice.dev
 
   commanddb:
     image: mysql:8.0
