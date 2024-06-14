@@ -1,7 +1,8 @@
 # dev
 FROM golang:1.22.3-alpine as dev
 WORKDIR /app
-RUN go install github.com/air-verse/air@latest
+RUN go install github.com/air-verse/air@latest \
+    && go install github.com/onsi/ginkgo/v2/ginkgo@latest
 
 COPY . .
 RUN go mod download && \
