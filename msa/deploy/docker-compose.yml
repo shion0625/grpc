@@ -10,10 +10,11 @@ services:
       - ..:/app
     ports:
       - "8080:8080"
-    depends_on:
-      - querydb
     environment:
       - ENV_FILE=env/.env.queryservice.dev
+    depends_on:
+      querydb:
+        condition: service_healthy
 
   commandservice:
     build:
@@ -26,10 +27,11 @@ services:
       - ..:/app
     ports:
       - "8081:8081"
-    depends_on:
-      - commanddb
     environment:
       - ENV_FILE=env/.env.commandservice.dev
+    depends_on:
+      commanddb:
+        condition: service_healthy
 
   commanddb:
     image: mysql:8.0
@@ -64,6 +66,11 @@ services:
       - ../internal/app/queryservice/infra/config/my.cnf:/etc/mysql/my.cnf
       - ../ddl:/docker-entrypoint-initdb.d/ddl # DDLスクリプトを格納するディレクトリ
       - ../internal/app/queryservice/infra/config/init.sh:/docker-entrypoint-initdb.d/init.sh # 初期化スクリプト
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     depends_on:
       commanddb:
         condition: service_healthy
