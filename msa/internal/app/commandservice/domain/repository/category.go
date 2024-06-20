@@ -8,8 +8,8 @@ import (
 )
 
 type Category interface {
-	Exist(ctx context.Context, tx *sql.Tx, category categories.Category) (bool, error)
+	Exists(ctx context.Context, tx *sql.Tx, category *categories.Category) error
 	Create(ctx context.Context, tx *sql.Tx, category *categories.Category) error
-	UpdateByID(ctx context.Context, tx *sql.Tx, category *categories.Category) error
-	DeleteByID(ctx context.Context, tx *sql.Tx, category *categories.Category) error
+	UpdateById(ctx context.Context, tx *sql.Tx, category *categories.Category) error
+	DeleteById(ctx context.Context, tx *sql.Tx, category *categories.Category) error
 }
