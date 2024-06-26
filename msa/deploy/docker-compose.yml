@@ -45,7 +45,10 @@ services:
     volumes:
       - commanddb-data:/var/lib/mysql
       - ../internal/app/commandservice/infra/config/my.cnf:/etc/mysql/my.cnf
-      - ../ddl:/docker-entrypoint-initdb.d
+      - ../ddl/query:/docker-entrypoint-initdb.d
+      - ../ddl/ssl/server-cert.pem:/etc/mysql/ssl/server-cert.pem
+      - ../ddl/ssl/server-key.pem:/etc/mysql/ssl/server-key.pem
+      - ../ddl/ssl/ca-cert.pem:/etc/mysql/ssl/ca-cert.pem
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
@@ -64,8 +67,11 @@ services:
     volumes:
       - querydb-data:/var/lib/mysql
       - ../internal/app/queryservice/infra/config/my.cnf:/etc/mysql/my.cnf
-      - ../ddl:/docker-entrypoint-initdb.d/ddl # DDLスクリプトを格納するディレクトリ
       - ../internal/app/queryservice/infra/config/init.sh:/docker-entrypoint-initdb.d/init.sh # 初期化スクリプト
+      - ../ddl/query:/docker-entrypoint-initdb.d/ddl # DDLスクリプトを格納するディレクトリ
+      - ../ddl/ssl/server-cert.pem:/etc/mysql/ssl/server-cert.pem
+      - ../ddl/ssl/server-key.pem:/etc/mysql/ssl/server-key.pem
+      - ../ddl/ssl/ca-cert.pem:/etc/mysql/ssl/ca-cert.pem
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s

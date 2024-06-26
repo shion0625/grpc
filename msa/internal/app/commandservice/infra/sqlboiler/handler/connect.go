@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"crypto/tls"
+	"crypto/x509"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -8,6 +10,7 @@ import (
 	"time"
 
 	"github.com/BurntSushi/toml"
+	"github.com/go-sql-driver/mysql"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 )
 
@@ -24,6 +27,9 @@ type DBConfig struct {
 	Port     int64  `toml:"port"`
 	User     string `toml:"user"`
 	Password string `toml:"pass"`
+	SSLCA    string `toml:"sslca"`
+	SSLCert  string `toml:"ssl-cert"`
+	SSLKey   string `toml:"ssl-key"`
 }
 
 func tomlRead(path string) (*DBConfig, error) {
@@ -38,6 +44,32 @@ func tomlRead(path string) (*DBConfig, error) {
 	return &config, nil
 }
 
+func registerTLSConfig(config *DBConfig) error {
+	// カスタムTLS設定を登録
+	rootCertPool := x509.NewCertPool()
+	pem, err := os.ReadFile(config.SSLCA)
+	if err != nil {
+		return DBErrHandler(err)
+	}
+	if ok := rootCertPool.AppendCertsFromPEM(pem); !ok {
+		return DBErrHandler(errors.New("failed to append PEM"))
+	}
+
+	clientCert := make([]tls.Certificate, 0, 1)
+	certs, err := tls.LoadX509KeyPair(config.SSLCert, config.SSLKey)
+	if err != nil {
+		return DBErrHandler(err)
+	}
+	clientCert = append(clientCert, certs)
+
+	mysql.RegisterTLSConfig("custom", &tls.Config{
+		RootCAs:      rootCertPool,
+		Certificates: clientCert,
+	})
+
+	return nil
+}
+
 func DBConnect() error {
 	path := os.Getenv("DB_CONFIG_PATH")
 	if path == "" {
@@ -48,6 +80,8 @@ func DBConnect() error {
 	if err != nil {
 		return DBErrHandler(err)
 	}
+
+	registerTLSConfig(config)
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", config.User, config.Password, config.Host, config.Port, config.DBName)
 	db, err := sql.Open(RDBMS, dsn)

@@ -26,3 +26,8 @@ all: deps lint test coverage
 
 sqlboiler-commandservice:
 	sqlboiler mysql -c internal/app/commandservice/infra/sqlboiler/config/database.toml -o internal/app/commandservice/infra/sqlboiler/models -p models --no-tests --wipe
+
+db-key: 
+	mkdir -p ddl/ssl
+	openssl req -newkey rsa:2048 -nodes -keyout ddl/ssl/server-key.pem -x509 -out ddl/ssl/server-cert.pem
+	openssl req -newkey rsa:2048 -nodes -keyout ddl/ssl/ca-key.pem -x509 -out ddl/ssl/ca-cert.pem

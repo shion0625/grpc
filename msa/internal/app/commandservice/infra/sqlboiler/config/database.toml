@@ -5,6 +5,9 @@
     user       = "commanduser"         # ユーザー名
     pass       = "commandpassword"     # パスワード
     sslmode    = "false"               # SSLモード
+    sslca      = "/etc/mysql/ssl/ca-cert.pem"         # CA証明書
+    sslcert    = "/etc/mysql/ssl/server-cert.pem"     # サーバー証明書
+    sslkey     = "/etc/mysql/ssl/server-key.pem"      # サーバーキー
     whitelist = [                      # アクセスするデータベースオブジェクト
         "product",                     # productテーブル
         "category"                     # categoryテーブル
