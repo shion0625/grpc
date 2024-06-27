@@ -1,5 +1,5 @@
 # dev
-FROM golang:1.22.3-alpine as dev
+FROM golang:1.22.4-alpine as dev
 WORKDIR /app
 
 RUN apk --no-cache add make
