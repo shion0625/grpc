@@ -1,10 +1,11 @@
 package dao_test
 
 import (
-	"github.com/shion0625/grpc/msa/internal/app/commandservice/infra/sqlboiler/handler"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/shion0625/grpc/msa/internal/app/commandservice/infra/sqlboiler/handler"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"

@@ -4,13 +4,15 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
 	"github.com/shion0625/grpc/msa/internal/app/commandservice/domain/models/products"
 	"github.com/shion0625/grpc/msa/internal/app/commandservice/domain/repository"
+
+	"log"
 
 	"github.com/shion0625/grpc/msa/internal/app/commandservice/infra/sqlboiler/handler"
 	"github.com/shion0625/grpc/msa/internal/app/commandservice/infra/sqlboiler/models"
 	"github.com/shion0625/grpc/msa/internal/pkg/errs"
-	"log"
 
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"

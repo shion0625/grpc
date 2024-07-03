@@ -2,6 +2,7 @@ package dao_test
 
 import (
 	"context"
+
 	"github.com/shion0625/grpc/msa/internal/app/commandservice/domain/models/categories"
 	"github.com/shion0625/grpc/msa/internal/app/commandservice/domain/repository"
 	"github.com/shion0625/grpc/msa/internal/app/commandservice/infra/sqlboiler/dao"
