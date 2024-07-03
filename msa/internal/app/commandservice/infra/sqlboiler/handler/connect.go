@@ -48,24 +48,31 @@ func registerTLSConfig(config *DBConfig) error {
 	// カスタムTLS設定を登録
 	rootCertPool := x509.NewCertPool()
 	pem, err := os.ReadFile(config.SSLCA)
+
 	if err != nil {
 		return DBErrHandler(err)
 	}
+
 	if ok := rootCertPool.AppendCertsFromPEM(pem); !ok {
 		return DBErrHandler(errors.New("failed to append PEM"))
 	}
 
 	clientCert := make([]tls.Certificate, 0, 1)
 	certs, err := tls.LoadX509KeyPair(config.SSLCert, config.SSLKey)
+
 	if err != nil {
 		return DBErrHandler(err)
 	}
+
 	clientCert = append(clientCert, certs)
 
-	mysql.RegisterTLSConfig("custom", &tls.Config{
+	if err := mysql.RegisterTLSConfig("custom", &tls.Config{
 		RootCAs:      rootCertPool,
 		Certificates: clientCert,
-	})
+		MinVersion:   tls.VersionTLS12,
+	}); err != nil {
+		return DBErrHandler(err)
+	}
 
 	return nil
 }
@@ -81,7 +88,9 @@ func DBConnect() error {
 		return DBErrHandler(err)
 	}
 
-	registerTLSConfig(config)
+	if err := registerTLSConfig(config); err != nil {
+		return DBErrHandler(err)
+	}
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", config.User, config.Password, config.Host, config.Port, config.DBName)
 	db, err := sql.Open(RDBMS, dsn)

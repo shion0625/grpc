@@ -14,17 +14,18 @@ import (
 type transaction struct{}
 
 // トランザクションを開始する
-func (inc *transaction) begin(ctx context.Context) (*sql.Tx, error) {
+func (t *transaction) begin(ctx context.Context) (*sql.Tx, error) {
 	// トランザクションを開始する
 	tran, err := boil.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, handler.DBErrHandler(err)
 	}
+
 	return tran, nil
 }
 
 // トランザクションを終了する
-func (ins *transaction) complete(tran *sql.Tx, err error) error {
+func (t *transaction) complete(tran *sql.Tx, err error) error {
 	if err != nil {
 		if e := tran.Rollback(); e != nil {
 			return handler.DBErrHandler(err)
@@ -38,5 +39,24 @@ func (ins *transaction) complete(tran *sql.Tx, err error) error {
 			log.Println("トランザクションをコミットしました。")
 		}
 	}
+
 	return nil
+}
+
+// トランザクションを実行する共通関数
+func ExecuteTransaction(ctx context.Context, t *transaction, action func(tran *sql.Tx) error) error {
+	tran, err := t.begin(ctx)
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		if err := t.complete(tran, err); err != nil {
+			log.Println("トランザクションの完了中にエラーが発生しました:", err)
+		}
+	}()
+
+	err = action(tran)
+
+	return err
 }

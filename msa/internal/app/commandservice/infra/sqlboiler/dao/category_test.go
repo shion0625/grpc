@@ -34,7 +34,8 @@ var _ = Describe("categoryRepositorySQLBoiler構造体", Ordered, Label("Categor
 
 	// テスト毎の後処理
 	AfterEach(func() {
-		tran.Rollback() // トランザクションのロールバックc
+		err := tran.Rollback() // トランザクションのロールバック
+		Expect(err).To(BeNil())
 	})
 
 	// Exists()メソッドのテスト
@@ -98,7 +99,8 @@ var _ = Describe("categoryRepositorySQLBoiler構造体", Ordered, Label("Categor
 			// 削除対象のカテゴリを登録する
 			name, _ := categories.NewCategoryName("食品")
 			category, _ := categories.NewCategory(name)
-			rep.Create(ctx, tran, category)
+			err := rep.Create(ctx, tran, category)
+			Expect(err).To(BeNil())
 			// 登録したカテゴリを削除する
 			result := rep.DeleteById(ctx, tran, category)
 			Expect(result).To(BeNil())

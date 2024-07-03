@@ -20,6 +20,7 @@ func NewCategoryRepositorySQLBoiler() repository.Category {
 	repoModels.AddCategoryHook(boil.AfterInsertHook, categoryAfterInsertHook)
 	repoModels.AddCategoryHook(boil.AfterUpdateHook, categoryAfterUpdateHook)
 	repoModels.AddCategoryHook(boil.AfterDeleteHook, categoryAfterDeleteHook)
+
 	return &CategoryRepositorySQLBoiler{}
 }
 
@@ -51,9 +52,11 @@ func (r *CategoryRepositorySQLBoiler) Create(ctx context.Context, tx *sql.Tx, ca
 
 func (r *CategoryRepositorySQLBoiler) UpdateById(ctx context.Context, tx *sql.Tx, category *categories.Category) error {
 	oldCategory, err := repoModels.Categories(repoModels.CategoryWhere.ObjID.EQ(category.Id().Value())).One(ctx, tx)
+
 	if err != nil {
 		return handler.DBErrHandler(err)
 	}
+
 	if oldCategory == nil {
 		return errs.NewCRUDError(fmt.Sprintf("category id %s not found", category.Id().Value()))
 	}
@@ -73,9 +76,11 @@ func (r *CategoryRepositorySQLBoiler) UpdateById(ctx context.Context, tx *sql.Tx
 
 func (r *CategoryRepositorySQLBoiler) DeleteById(ctx context.Context, tx *sql.Tx, category *categories.Category) error {
 	oldCategory, err := repoModels.Categories(repoModels.CategoryWhere.ObjID.EQ(category.Id().Value())).One(ctx, tx)
+
 	if err != nil {
 		return handler.DBErrHandler(err)
 	}
+
 	if oldCategory == nil {
 		return errs.NewCRUDError(fmt.Sprintf("category id %s not found", category.Id().Value()))
 	}

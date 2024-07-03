@@ -1,7 +1,9 @@
+//nolint:dupl
 package application
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/shion0625/grpc/msa/internal/app/commandservice/domain/models/categories"
 	"github.com/shion0625/grpc/msa/internal/app/commandservice/domain/repository"
@@ -23,53 +25,35 @@ func NewCategoryService(rep repository.Category) CategoryService {
 }
 
 func (cs *categoryService) Add(ctx context.Context, category *categories.Category) error {
-	tran, err := cs.begin(ctx)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		defer cs.complete(tran, err)
-	}()
+	return ExecuteTransaction(ctx, &cs.transaction, func(tran *sql.Tx) error {
+		if err := cs.rep.Exists(ctx, tran, category); err != nil {
+			return err
+		}
 
-	if err = cs.rep.Exists(ctx, tran, category); err != nil {
-		return err
-	}
+		if err := cs.rep.Create(ctx, tran, category); err != nil {
+			return err
+		}
 
-	if err = cs.rep.Create(ctx, tran, category); err != nil {
-		return err
-	}
-
-	return nil
+		return nil
+	})
 }
 
 func (cs *categoryService) Update(ctx context.Context, category *categories.Category) error {
-	tran, err := cs.begin(ctx)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		defer cs.complete(tran, err)
-	}()
+	return ExecuteTransaction(ctx, &cs.transaction, func(tran *sql.Tx) error {
+		if err := cs.rep.UpdateById(ctx, tran, category); err != nil {
+			return err
+		}
 
-	if err = cs.rep.UpdateById(ctx, tran, category); err != nil {
-		return err
-	}
-
-	return nil
+		return nil
+	})
 }
 
 func (cs *categoryService) Delete(ctx context.Context, category *categories.Category) error {
-	tran, err := cs.begin(ctx)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		defer cs.complete(tran, err)
-	}()
+	return ExecuteTransaction(ctx, &cs.transaction, func(tran *sql.Tx) error {
+		if err := cs.rep.DeleteById(ctx, tran, category); err != nil {
+			return err
+		}
 
-	if err = cs.rep.DeleteById(ctx, tran, category); err != nil {
-		return err
-	}
-
-	return nil
+		return nil
+	})
 }

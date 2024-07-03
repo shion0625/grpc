@@ -27,6 +27,7 @@ func NewProductRepositorySQLBoiler() repository.Product {
 	models.AddProductHook(boil.AfterInsertHook, ProductAfterInsertHook)
 	models.AddProductHook(boil.AfterUpdateHook, ProductAfterUpdateHook)
 	models.AddProductHook(boil.AfterDeleteHook, ProductAfterDeleteHook)
+
 	return &productRepositorySQLBoiler{}
 }
 
@@ -39,6 +40,7 @@ func (rep *productRepositorySQLBoiler) Exists(ctx context.Context, tran *sql.Tx,
 	if err != nil {
 		return handler.DBErrHandler(err)
 	}
+
 	if !exists { // 同じ名称の商品は存在していない?
 		return nil
 	} else {
@@ -56,10 +58,12 @@ func (rep *productRepositorySQLBoiler) Create(ctx context.Context, tran *sql.Tx,
 		Price:      int(product.Price().Value()),
 		CategoryID: product.Category().Id().Value(),
 	}
+
 	// 商品を永続化する
 	if err := new_product.Insert(ctx, tran, boil.Whitelist("obj_id", "name", "price", "category_id")); err != nil {
 		return handler.DBErrHandler(err)
 	}
+
 	return nil
 }
 
@@ -70,16 +74,20 @@ func (rep *productRepositorySQLBoiler) UpdateById(ctx context.Context, tran *sql
 	if up_model == nil {
 		return errs.NewCRUDError(fmt.Sprintf("商品番号:%sは存在しないため、更新できませんでした。", product.Id().Value()))
 	}
+
 	if err != nil {
 		return handler.DBErrHandler(err)
 	}
+
 	// 取得したモデルの値を変更する
 	up_model.Name = product.Name().Value()
 	up_model.Price = int(product.Price().Value())
+
 	// 更新を実行する
 	if _, err = up_model.Update(ctx, tran, boil.Whitelist("obj_id", "name", "price")); err != nil {
 		return handler.DBErrHandler(err)
 	}
+
 	return nil
 }
 
@@ -90,13 +98,16 @@ func (rep *productRepositorySQLBoiler) DeleteById(ctx context.Context, tran *sql
 	if del_model == nil {
 		return errs.NewCRUDError(fmt.Sprintf("商品番号:%sは存在しないため、削除できませんでした。", product.Id().Value()))
 	}
+
 	if err != nil {
 		return handler.DBErrHandler(err)
 	}
+
 	// 削除を実行する
 	if _, err = del_model.Delete(ctx, tran); err != nil {
 		return handler.DBErrHandler(err)
 	}
+
 	return nil
 }
 
@@ -104,6 +115,7 @@ func (rep *productRepositorySQLBoiler) DeleteById(ctx context.Context, tran *sql
 func ProductAfterInsertHook(ctx context.Context, exec boil.ContextExecutor, product *models.Product) error {
 	log.Printf("商品ID:%s 商品名:%s 単価:%d カテゴリ番号: %s を登録しました。\n",
 		product.ObjID, product.Name, product.Price, product.CategoryID)
+
 	return nil
 }
 
@@ -111,6 +123,7 @@ func ProductAfterInsertHook(ctx context.Context, exec boil.ContextExecutor, prod
 func ProductAfterUpdateHook(ctx context.Context, exec boil.ContextExecutor, product *models.Product) error {
 	log.Printf("商品ID:%s 商品名:%s 単価:%d カテゴリ番号: %s を変更しました。\n",
 		product.ObjID, product.Name, product.Price, product.CategoryID)
+
 	return nil
 }
 
@@ -118,5 +131,6 @@ func ProductAfterUpdateHook(ctx context.Context, exec boil.ContextExecutor, prod
 func ProductAfterDeleteHook(ctx context.Context, exec boil.ContextExecutor, product *models.Product) error {
 	log.Printf("商品ID:%s 商品名:%s 単価:%d カテゴリ番号: %s を削除しました。\n",
 		product.ObjID, product.Name, product.Price, product.CategoryID)
+
 	return nil
 }
